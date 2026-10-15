@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SECURE / STORAGE: Project Documentation</title>
+  <meta name="description" content="File segmentation and AES-256-GCM encryption with AWS S3 storage, hosted on S3 and delivered through CloudFront over HTTPS.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <span class="wordmark">SECURE<span>/</span>STORAGE</span>
+  <nav><a href="#overview">Overview</a><a href="#pipeline">Pipeline</a><a href="#security">Security</a><a href="#hosting">Hosting</a><a href="#limits">Limits</a></nav>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="kicker">Cloud Computing mini project · 2026</p>
+    <h1>YOUR DATA.<br>CUT INTO BLOCKS.<br>LOCKED BY DESIGN.</h1>
+    <p class="lede">A Flask application that splits a file into fixed-size blocks, encrypts each block with AES-256-GCM, stores the encrypted package locally or in Amazon S3, and restores the original file only when the key and SHA-256 check pass.</p>
+  </section>
+
+  <section id="overview" class="sec">
+    <h2><span>01</span> Overview</h2>
+    <p>The application works in two modes. Local mode needs no AWS account. AWS S3 mode uploads the encrypted blocks and metadata to a private bucket, and downloads them back for restoration.</p>
+    <ul class="grid">
+      <li><b>Segmentation</b><span>Files split into 256 KB to 4 MB blocks. Empty files and files smaller than one block are handled.</span></li>
+      <li><b>Encryption</b><span>AES-256-GCM with a fresh random 96-bit nonce per block. Block position and total count are authenticated.</span></li>
+      <li><b>Cloud storage</b><span>Boto3 uploads to a private S3 bucket under files/{file_id}/. Only ciphertext and metadata leave the machine.</span></li>
+      <li><b>Restore</b><span>Blocks are decrypted in order, reassembled, and checked against the stored size and SHA-256 hash.</span></li>
+    </ul>
+  </section>
+
+  <section id="pipeline" class="sec">
+    <h2><span>02</span> Pipeline</h2>
+    <ol class="steps">
+      <li><b>INGEST</b> The uploaded file is read into memory. Its name is sanitized.</li>
+      <li><b>SEGMENT</b> The file is cut into ordered blocks of the chosen size.</li>
+      <li><b>ENCRYPT</b> A new 256-bit key is generated. Each block is sealed with its own nonce.</li>
+      <li><b>STORE</b> The ZIP package (metadata.json and blocks/*.enc) is saved locally or uploaded to S3.</li>
+      <li><b>RESTORE</b> The package is opened with the key, blocks are decrypted, and the SHA-256 hash is verified.</li>
+    </ol>
+    <pre class="code"><code>files/{file_id}/metadata.json
+files/{file_id}/blocks/block_00001.enc
+files/{file_id}/blocks/block_00002.enc</code></pre>
+  </section>
+
+  <section id="security" class="sec">
+    <h2><span>03</span> Security design</h2>
+    <ul class="list">
+      <li>The encryption key is never stored on the server, in S3, or in the activity log.</li>
+      <li>The S3 bucket keeps Block Public Access turned on. The app uses an IAM user limited to PutObject, GetObject, and ListBucket on the project prefix.</li>
+      <li>Uploaded filenames are sanitized to prevent path traversal.</li>
+      <li>The server listens only on localhost, with debug mode off.</li>
+      <li>A wrong key or a modified block fails authentication instead of returning corrupted data.</li>
+    </ul>
+  </section>
+
+  <section id="hosting" class="sec">
+    <h2><span>04</span> Hosting and content delivery</h2>
+    <p>This documentation site is static HTML and CSS. It is stored in a separate S3 bucket and served through Amazon CloudFront over HTTPS. The bucket stays private, and CloudFront reads it using Origin Access Control.</p>
+    <ul class="list">
+      <li><b>Amazon S3</b> stores the files.</li>
+      <li><b>Amazon CloudFront</b> caches them at edge locations worldwide and terminates HTTPS, redirecting HTTP to HTTPS.</li>
+      <li><b>HTTPS</b> is provided by the default CloudFront certificate, with no certificate purchase needed.</li>
+    </ul>
+  </section>
+
+  <section id="limits" class="sec">
+    <h2><span>05</span> Limitations</h2>
+    <p>This is an educational prototype, not a production multi-user storage service. There are no user accounts, key management is manual, files are held in memory during processing, and the app has no rate limiting or audit trail beyond the in-memory log.</p>
+  </section>
+</main>
+
+<footer>
+  <p>Built with Flask, boto3, and cryptography. Hosted on Amazon S3 with Amazon CloudFront.</p>
+</footer>
+</body>
+</html>

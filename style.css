@@ -1,0 +1,29 @@
+:root { --ivory:#F4F0E6; --ink:#171717; --lime:#C8FF00; --concrete:#D8D2C5; --white:#FFFFFF; --rule:2px solid var(--ink); }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--ivory); color:var(--ink); font:400 16px/1.6 Inter, system-ui, "Segoe UI", sans-serif; }
+h1,h2,.wordmark { font-family:"Space Grotesk", system-ui, sans-serif; letter-spacing:-.02em; }
+a { color:var(--ink); }
+.topbar { background:var(--ink); color:var(--ivory); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; padding:.9rem 1.5rem; position:sticky; top:0; }
+.wordmark { font-weight:700; font-size:1.2rem; }
+.wordmark span { color:var(--lime); padding:0 .15rem; }
+.topbar nav { display:flex; gap:1.1rem; flex-wrap:wrap; }
+.topbar nav a { color:var(--ivory); text-decoration:none; font:500 .75rem "JetBrains Mono", monospace; text-transform:uppercase; letter-spacing:.06em; }
+.topbar nav a:hover { color:var(--lime); }
+main { max-width:960px; margin:0 auto; padding:0 1.25rem 3rem; }
+.hero { padding:3.5rem 0 2.5rem; border-bottom:var(--rule); }
+.kicker { font:500 .8rem "JetBrains Mono", monospace; text-transform:uppercase; letter-spacing:.08em; margin:0 0 1rem; }
+h1 { font-weight:700; font-size:clamp(2.2rem,7vw,5rem); line-height:.93; text-transform:uppercase; margin:0 0 1.4rem; }
+.lede { max-width:60ch; font-size:1.05rem; margin:0; }
+.sec { border-bottom:var(--rule); padding:2.2rem 0; }
+.sec h2 { font-size:1.6rem; text-transform:uppercase; margin:0 0 1rem; }
+.sec h2 span { background:var(--ink); color:var(--ivory); font:500 .8rem "JetBrains Mono", monospace; padding:.2rem .4rem; margin-right:.6rem; vertical-align:middle; }
+.grid { list-style:none; padding:0; margin:1.2rem 0 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); border-top:var(--rule); border-left:var(--rule); }
+.grid li { border-right:var(--rule); border-bottom:var(--rule); padding:1rem; background:var(--white); display:flex; flex-direction:column; gap:.4rem; }
+.grid b { font-family:"Space Grotesk", sans-serif; text-transform:uppercase; }
+.grid span { font-size:.92rem; }
+.steps, .list { padding-left:1.2rem; }
+.steps li, .list li { margin-bottom:.5rem; }
+.steps b { background:var(--lime); padding:0 .3rem; margin-right:.4rem; font-family:"JetBrains Mono", monospace; font-size:.9rem; }
+.code { background:var(--ink); color:var(--ivory); padding:1rem; overflow-x:auto; font:400 .85rem/1.6 "JetBrains Mono", monospace; }
+footer { text-align:center; font:400 .8rem "JetBrains Mono", monospace; padding:2rem 1rem; border-top:var(--rule); }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
